@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutList, Calendar, Trello, X, Play } from 'lucide-react';
+import { LayoutList, Calendar, Trello, X } from 'lucide-react';
 import TeamDashboard from './dashboard/TeamDashboard';
 
 interface SidebarProps {
@@ -62,18 +62,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           >
             <Trello size={20} />
             <span>カンバンボード</span>
-          </NavLink>
-          <NavLink
-            to="/episodes"
-            onClick={onClose}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2 rounded-lg text-text-primary hover:bg-primary/5 transition-colors ${
-                isActive ? 'bg-primary/10 text-primary font-medium' : ''
-              }`
-            }
-          >
-            <Play size={20} />
-            <span>進捗すごろく</span>
           </NavLink>
           <NavLink
             to="/calendar"
