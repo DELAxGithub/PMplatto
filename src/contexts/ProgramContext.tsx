@@ -51,15 +51,24 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
             table: 'programs'
           },
           async (payload) => {
+            console.log('Real-time update received:', payload);
             // ペイロードのイベントタイプに応じて適切な処理を実行
             switch (payload.eventType) {
               case 'INSERT':
-                setPrograms(prev => [payload.new as Program, ...prev]);
+                setPrograms(prev => {
+                  // 既に存在する場合は重複を避ける
+                  if (prev.some(p => p.id === payload.new.id)) {
+                    return prev;
+                  }
+                  return [payload.new as Program, ...prev];
+                });
                 break;
               case 'UPDATE':
-                setPrograms(prev =>
-                  prev.map(p => (p.id === payload.new.id ? payload.new as Program : p))
-                );
+                setPrograms(prev => {
+                  const updated = prev.map(p => (p.id === payload.new.id ? payload.new as Program : p));
+                  console.log('Programs updated via real-time:', updated);
+                  return updated;
+                });
                 break;
               case 'DELETE':
                 setPrograms(prev =>
@@ -68,6 +77,7 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
                 break;
               default:
                 // 不明なイベントタイプの場合は全データを再取得
+                console.log('Unknown event type, refreshing all programs');
                 await refreshPrograms();
             }
           }

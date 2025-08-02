@@ -155,6 +155,7 @@ export default function KanbanBoard() {
   // programs が更新されたら optimisticPrograms をリセット
   useEffect(() => {
     if (optimisticPrograms.length > 0 && !updatingProgram) {
+      console.log('Resetting optimistic programs after real-time update');
       setOptimisticPrograms([]);
     }
   }, [programs, updatingProgram, optimisticPrograms.length]);
@@ -182,16 +183,19 @@ export default function KanbanBoard() {
         ? { ...program, status: newStatus }
         : program
     );
+    console.log('Applying optimistic update:', { programId, newStatus });
     setOptimisticPrograms(updatedPrograms);
     setUpdatingProgram(programId);
 
     try {
       // Supabase の更新
+      console.log('Updating program in database:', { programId, newStatus });
       await updateProgram(programId, {
         status: newStatus
       });
       
       // 成功時: リアルタイム更新が来るまで楽観的更新を維持
+      console.log('Database update successful, waiting for real-time sync');
     } catch (error) {
       console.error('Failed to update program status:', error);
       // エラー時: 楽観的更新を取り消し
