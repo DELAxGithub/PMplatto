@@ -28,6 +28,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('🔐 Auth session result:', session ? 'FOUND' : 'NOT_FOUND');
       if (session?.user) {
         console.log('👤 User authenticated:', session.user.email);
+        console.log('🔐 User role:', session.user.role);
+        console.log('🔐 User aud:', session.user.aud);
       }
       setUser(session?.user ?? null);
       setLoading(false);

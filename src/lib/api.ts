@@ -27,6 +27,20 @@ export async function createProgram(program: NewProgram) {
 export async function updateProgram(id: number, updates: UpdateProgram) {
   console.log('🔄 API: Updating program', id, 'with data:', updates);
   
+  // First check if we can read the record
+  const { data: currentData, error: readError } = await supabase
+    .from('programs')
+    .select('*')
+    .eq('id', id)
+    .single();
+    
+  if (readError) {
+    console.error('❌ API: Cannot read program for update:', readError);
+    throw readError;
+  }
+  
+  console.log('📖 API: Current program data:', currentData);
+  
   const { data, error } = await supabase
     .from('programs')
     .update(updates)
@@ -38,6 +52,12 @@ export async function updateProgram(id: number, updates: UpdateProgram) {
   
   if (error) {
     console.error('❌ API: Update failed:', error);
+    console.error('❌ Error details:', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint
+    });
     throw error;
   }
   
