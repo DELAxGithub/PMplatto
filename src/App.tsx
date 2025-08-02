@@ -32,6 +32,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
+  console.log('📱 App component initializing...');
   return (
     <BrowserRouter>
       <AuthProvider>
