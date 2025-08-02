@@ -25,10 +25,12 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
   const refreshPrograms = async () => {
     try {
       setError(null);
+      console.log('🔄 Refreshing programs from database...');
       const data = await getPrograms();
+      console.log('📊 Fresh programs loaded:', data.length, 'programs');
       setPrograms(data);
     } catch (err) {
-      console.error('Error fetching programs:', err);
+      console.error('❌ Error fetching programs:', err);
       setError(err instanceof Error ? err.message : '番組データの取得に失敗しました');
       throw err;
     }

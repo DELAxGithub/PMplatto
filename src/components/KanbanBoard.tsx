@@ -198,11 +198,12 @@ export default function KanbanBoard() {
     try {
       // Supabase の更新
       console.log('💾 Updating program in database:', { programId, newStatus });
-      await updateProgram(programId, {
+      const updatedProgram = await updateProgram(programId, {
         status: newStatus
       });
       
-      console.log('✅ Database update successful, waiting for real-time sync');
+      console.log('✅ Database update successful:', updatedProgram);
+      console.log('🔄 Waiting for real-time sync...');
       
       // リアルタイム更新を待つ（3秒後にタイムアウト）
       setTimeout(() => {
@@ -211,8 +212,9 @@ export default function KanbanBoard() {
       }, 3000);
       
     } catch (error) {
-      console.error('Failed to update program status:', error);
+      console.error('❌ Database update FAILED:', error);
       // エラー時: 楽観的更新を取り消し
+      console.log('🔄 Reverting optimistic update due to DB error');
       setOptimisticPrograms([]);
       setUpdatingProgram(null);
     }

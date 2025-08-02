@@ -25,6 +25,8 @@ export async function createProgram(program: NewProgram) {
 }
 
 export async function updateProgram(id: number, updates: UpdateProgram) {
+  console.log('🔄 API: Updating program', id, 'with data:', updates);
+  
   const { data, error } = await supabase
     .from('programs')
     .update(updates)
@@ -32,7 +34,14 @@ export async function updateProgram(id: number, updates: UpdateProgram) {
     .select()
     .single();
 
-  if (error) throw error;
+  console.log('🔄 API: Update result:', { data, error });
+  
+  if (error) {
+    console.error('❌ API: Update failed:', error);
+    throw error;
+  }
+  
+  console.log('✅ API: Update successful, returning:', data);
   return data as Program;
 }
 
