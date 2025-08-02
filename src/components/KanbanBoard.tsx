@@ -105,7 +105,7 @@ function StatusColumn({ status, programs, updatingProgram, onCardClick }: Status
           } ${updatingProgram ? 'pointer-events-none opacity-50' : ''}`}
           style={{ maxHeight: 'calc((100vh - 16rem) / 2)' }}
         >
-          {programs
+          {filteredPrograms
             .filter(program => program.status === status)
             .map((program, index) => (
               <ProgramCard
@@ -129,10 +129,14 @@ export default function KanbanBoard() {
   const [updatingProgram, setUpdatingProgram] = useState<number | null>(null);
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [optimisticPrograms, setOptimisticPrograms] = useState<Program[]>([]);
 
   const today = startOfToday();
 
-  const filteredPrograms = programs
+  // 楽観的更新された programs またはオリジナルの programs を使用
+  const currentPrograms = optimisticPrograms.length > 0 ? optimisticPrograms : programs;
+
+  const filteredPrograms = currentPrograms
     .filter(program => program.status !== 'キャスティング中')
     .filter(program => {
       if (!program.first_air_date) return true;
@@ -147,6 +151,13 @@ export default function KanbanBoard() {
         (program.program_id || '').toLowerCase().includes(query)
       );
     });
+
+  // programs が更新されたら optimisticPrograms をリセット
+  React.useEffect(() => {
+    if (optimisticPrograms.length > 0 && !updatingProgram) {
+      setOptimisticPrograms([]);
+    }
+  }, [programs, updatingProgram, optimisticPrograms.length]);
 
   const handleDragEnd = async (result: DropResult) => {
     const { destination, source, draggableId } = result;
@@ -165,7 +176,13 @@ export default function KanbanBoard() {
     const programId = parseInt(draggableId, 10);
     const newStatus = destination.droppableId as ProgramStatus;
     
-    // UI を即座に更新するための楽観的更新
+    // 楽観的更新: UI を即座に更新
+    const updatedPrograms = currentPrograms.map(program =>
+      program.id === programId
+        ? { ...program, status: newStatus }
+        : program
+    );
+    setOptimisticPrograms(updatedPrograms);
     setUpdatingProgram(programId);
 
     try {
@@ -174,11 +191,11 @@ export default function KanbanBoard() {
         status: newStatus
       });
       
-      // 成功時は自動的に Context がリアルタイム更新される
+      // 成功時: リアルタイム更新が来るまで楽観的更新を維持
     } catch (error) {
       console.error('Failed to update program status:', error);
-      // エラー時は元の状態に戻すために再読み込み
-      window.location.reload();
+      // エラー時: 楽観的更新を取り消し
+      setOptimisticPrograms([]);
     } finally {
       setUpdatingProgram(null);
     }
@@ -205,7 +222,7 @@ export default function KanbanBoard() {
     );
   }
 
-  const airedCount = programs.filter(program => {
+  const airedCount = currentPrograms.filter(program => {
     if (!program.first_air_date) return false;
     const airDate = parseISO(program.first_air_date);
     return isBefore(airDate, today);
