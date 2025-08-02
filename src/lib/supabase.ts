@@ -22,4 +22,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(`Missing Supabase environment variables. Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file.`);
 }
 
+// Debug: Log correct Supabase URL to verify configuration
+console.log('🔧 PMplatto Supabase URL:', supabaseUrl);
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
