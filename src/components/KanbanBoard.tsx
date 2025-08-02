@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { MoreVertical, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { format, isBefore, startOfToday, parseISO } from 'date-fns';
 import type { Program, ProgramStatus } from '../types/program';
@@ -148,11 +148,13 @@ export default function KanbanBoard() {
       );
     });
 
-  const handleDragEnd = async (result: any) => {
+  const handleDragEnd = async (result: DropResult) => {
     const { destination, source, draggableId } = result;
 
+    // ドロップ先がない場合は何もしない
     if (!destination) return;
 
+    // 同じ位置にドロップした場合は何もしない
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
@@ -161,14 +163,22 @@ export default function KanbanBoard() {
     }
 
     const programId = parseInt(draggableId, 10);
+    const newStatus = destination.droppableId as ProgramStatus;
+    
+    // UI を即座に更新するための楽観的更新
     setUpdatingProgram(programId);
 
     try {
+      // Supabase の更新
       await updateProgram(programId, {
-        status: destination.droppableId as ProgramStatus
+        status: newStatus
       });
+      
+      // 成功時は自動的に Context がリアルタイム更新される
     } catch (error) {
       console.error('Failed to update program status:', error);
+      // エラー時は元の状態に戻すために再読み込み
+      window.location.reload();
     } finally {
       setUpdatingProgram(null);
     }
