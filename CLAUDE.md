@@ -8,7 +8,7 @@ PMplatto (プラッと進捗すごろく) is a React/TypeScript program manageme
 ### 🚨 Priority Issues
 - **Kanban Board Optimistic Updates**: Fixed 2025-08-02
   - **Problem**: ドラッグ&ドロップの楽観的更新がうまく動作しない (optimistic updates broken)
-  - **Location**: https://program-management-pm.netlify.app/episodes/kanban
+  - **Location**: https://delaxplatto.com/kanban
   - **Root Cause**: 
     - Premature reset of optimisticPrograms in useEffect (lines 159-168)
     - Race condition between optimistic updates and real-time sync
