@@ -68,7 +68,8 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
                 console.log('📝 Updating program via real-time:', payload.new.id, 'to status:', payload.new.status);
                 setPrograms(prev => {
                   const updated = prev.map(p => (p.id === payload.new.id ? payload.new as Program : p));
-                  console.log('✅ Programs state updated');
+                  console.log('✅ Programs state updated via real-time');
+                  // リアルタイム更新のタイムスタンプをセット（ただし、これだけでは十分ではない）
                   return updated;
                 });
                 break;

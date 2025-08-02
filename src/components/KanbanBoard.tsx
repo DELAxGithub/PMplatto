@@ -152,13 +152,20 @@ export default function KanbanBoard() {
       );
     });
 
-  // programs が更新されたら optimisticPrograms をリセット
+  // リアルタイム更新確認用の状態
+  const [lastUpdateTime, setLastUpdateTime] = useState<number>(0);
+
+  // programs が更新されたら optimisticPrograms をリセット (ただし実際に変更があった場合のみ)
   useEffect(() => {
     if (optimisticPrograms.length > 0 && !updatingProgram) {
-      console.log('🔄 Resetting optimistic programs after real-time update');
-      setOptimisticPrograms([]);
+      const currentTime = Date.now();
+      // 最後の更新から100ms以上経過している場合のみリセット（リアルタイム更新の証拠）
+      if (currentTime - lastUpdateTime > 100) {
+        console.log('🔄 Resetting optimistic programs after real-time update');
+        setOptimisticPrograms([]);
+      }
     }
-  }, [programs, updatingProgram, optimisticPrograms.length]);
+  }, [programs, updatingProgram, optimisticPrograms.length, lastUpdateTime]);
 
   const handleDragEnd = async (result: DropResult) => {
     const { destination, source, draggableId } = result;
@@ -186,6 +193,7 @@ export default function KanbanBoard() {
     console.log('🎯 Applying optimistic update:', { programId, newStatus });
     setOptimisticPrograms(updatedPrograms);
     setUpdatingProgram(programId);
+    setLastUpdateTime(Date.now());
 
     try {
       // Supabase の更新
@@ -195,12 +203,17 @@ export default function KanbanBoard() {
       });
       
       console.log('✅ Database update successful, waiting for real-time sync');
-      // 成功時: リアルタイム更新が来るまで楽観的更新を維持
+      
+      // リアルタイム更新を待つ（3秒後にタイムアウト）
+      setTimeout(() => {
+        console.log('⏰ Real-time timeout, keeping optimistic update');
+        setUpdatingProgram(null);
+      }, 3000);
+      
     } catch (error) {
       console.error('Failed to update program status:', error);
       // エラー時: 楽観的更新を取り消し
       setOptimisticPrograms([]);
-    } finally {
       setUpdatingProgram(null);
     }
   };
