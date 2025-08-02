@@ -12,6 +12,8 @@ import Calendar from './components/Calendar';
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
+  console.log('🛡️ PrivateRoute check:', { user: user ? 'EXISTS' : 'NULL', loading });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-secondary flex items-center justify-center">
@@ -21,9 +23,11 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
+    console.log('🚫 No user, redirecting to login');
     return <Navigate to="/login" replace />;
   }
 
+  console.log('✅ User authenticated, rendering protected content');
   return <>{children}</>;
 }
 

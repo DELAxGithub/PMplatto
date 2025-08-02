@@ -22,13 +22,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check active sessions and sets the user
+    console.log('🔐 Checking authentication session...');
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('🔐 Auth session result:', session ? 'FOUND' : 'NOT_FOUND');
+      if (session?.user) {
+        console.log('👤 User authenticated:', session.user.email);
+      }
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
     // Listen for changes on auth state
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('🔐 Auth state change:', event, session ? 'WITH_SESSION' : 'NO_SESSION');
       const currentUser = session?.user ?? null;
       setUser(currentUser);
       setLoading(false);

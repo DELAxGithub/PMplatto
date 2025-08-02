@@ -35,7 +35,9 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    console.log('👤 ProgramContext: User state changed:', user ? 'AUTHENTICATED' : 'NOT_AUTHENTICATED');
     if (user) {
+      console.log('👤 User authenticated, setting up programs and real-time...');
       refreshPrograms().finally(() => setLoading(false));
 
       // リアルタイム更新のサブスクリプション設定
