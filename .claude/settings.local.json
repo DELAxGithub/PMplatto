@@ -11,7 +11,12 @@
       "mcp__ide__executeCode",
       "Bash(python:*)",
       "Bash(rm:*)",
-      "Bash(git clone:*)"
+      "Bash(git clone:*)",
+      "Bash(ls:*)",
+      "Bash(npx supabase db remote:*)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }
