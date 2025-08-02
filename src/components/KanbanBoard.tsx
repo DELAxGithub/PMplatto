@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { MoreVertical, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { format, isBefore, startOfToday, parseISO } from 'date-fns';
@@ -153,7 +153,7 @@ export default function KanbanBoard() {
     });
 
   // programs が更新されたら optimisticPrograms をリセット
-  React.useEffect(() => {
+  useEffect(() => {
     if (optimisticPrograms.length > 0 && !updatingProgram) {
       setOptimisticPrograms([]);
     }
