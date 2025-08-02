@@ -39,6 +39,7 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
       refreshPrograms().finally(() => setLoading(false));
 
       // リアルタイム更新のサブスクリプション設定
+      console.log('🔗 Setting up real-time subscription for programs');
       const channel = supabase
         .channel('programs_changes')
         .on(
@@ -49,6 +50,7 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
             table: 'programs'
           },
           async (payload) => {
+            console.log('🔄 Real-time event:', payload.eventType, payload);
             // ペイロードのイベントタイプに応じて適切な処理を実行
             switch (payload.eventType) {
               case 'INSERT':
@@ -61,8 +63,10 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
                 });
                 break;
               case 'UPDATE':
+                console.log('📝 Updating program via real-time:', payload.new.id, 'to status:', payload.new.status);
                 setPrograms(prev => {
                   const updated = prev.map(p => (p.id === payload.new.id ? payload.new as Program : p));
+                  console.log('✅ Programs state updated');
                   return updated;
                 });
                 break;
@@ -77,7 +81,9 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
             }
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log('🔌 Real-time subscription status:', status);
+        });
 
       return () => {
         supabase.removeChannel(channel);
