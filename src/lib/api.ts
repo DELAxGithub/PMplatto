@@ -4,13 +4,11 @@ import type { CalendarTask, NewCalendarTask, UpdateCalendarTask } from '../types
 
 // 既存のプログラム関連の関数
 export async function getPrograms() {
-  console.log('Supabase client:', supabase);
   const { data, error } = await supabase
     .from('programs')
     .select('*')
     .order('created_at', { ascending: false });
 
-  console.log('Query result:', { data, error });
   if (error) throw error;
   return data as Program[];
 }

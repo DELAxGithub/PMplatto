@@ -25,9 +25,7 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
   const refreshPrograms = async () => {
     try {
       setError(null);
-      console.log('Fetching programs...');
       const data = await getPrograms();
-      console.log('Programs fetched:', data);
       setPrograms(data);
     } catch (err) {
       console.error('Error fetching programs:', err);
@@ -51,7 +49,6 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
             table: 'programs'
           },
           async (payload) => {
-            console.log('Real-time update received:', payload);
             // ペイロードのイベントタイプに応じて適切な処理を実行
             switch (payload.eventType) {
               case 'INSERT':
@@ -66,7 +63,6 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
               case 'UPDATE':
                 setPrograms(prev => {
                   const updated = prev.map(p => (p.id === payload.new.id ? payload.new as Program : p));
-                  console.log('Programs updated via real-time:', updated);
                   return updated;
                 });
                 break;
@@ -77,7 +73,6 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
                 break;
               default:
                 // 不明なイベントタイプの場合は全データを再取得
-                console.log('Unknown event type, refreshing all programs');
                 await refreshPrograms();
             }
           }
