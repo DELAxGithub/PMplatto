@@ -105,7 +105,7 @@ function StatusColumn({ status, programs, updatingProgram, onCardClick }: Status
           } ${updatingProgram ? 'pointer-events-none opacity-50' : ''}`}
           style={{ maxHeight: 'calc((100vh - 16rem) / 2)' }}
         >
-          {filteredPrograms
+          {programs
             .filter(program => program.status === status)
             .map((program, index) => (
               <ProgramCard
