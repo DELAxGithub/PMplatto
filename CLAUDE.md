@@ -6,13 +6,21 @@ PMplatto (プラッと進捗すごろく) is a React/TypeScript program manageme
 ## Critical Issues Tracking
 
 ### 🚨 Priority Issues
-- **Kanban Board Real-time Drag & Drop**: Fixed 2025-08-02
-  - **Problem**: ドラッグ&ドロップがリアルタイムで反映されない
-  - **Location**: https://delaxplatto.com/kanban 
+- **Kanban Board Optimistic Updates**: Fixed 2025-08-02
+  - **Problem**: ドラッグ&ドロップの楽観的更新がうまく動作しない (optimistic updates broken)
+  - **Location**: https://program-management-pm.netlify.app/episodes/kanban
+  - **Root Cause**: 
+    - Premature reset of optimisticPrograms in useEffect (lines 159-168)
+    - Race condition between optimistic updates and real-time sync
+    - 100ms timing threshold too short and unreliable
   - **Solution Applied**: 
-    - Fixed `DropResult` type import from `@hello-pangea/dnd`
-    - Improved error handling with optimistic updates
-    - Enhanced real-time synchronization with Supabase
+    - Implemented proper optimistic update pattern (update UI first, then API)
+    - Added complete original program state preservation for error recovery
+    - Improved real-time sync detection with actual state comparison
+    - Removed unreliable timing-based reset logic
+    - Added proper error handling with user feedback
+  - **Reference**: PMliberary drag-drop-optimistic-update-guide.md pattern
+  - **Status**: FIXED
 
 ## Workflow Documentation
 
