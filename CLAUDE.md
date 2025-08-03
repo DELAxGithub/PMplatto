@@ -3,24 +3,23 @@
 ## Project Overview
 PMplatto (プラッと進捗すごろく) is a React/TypeScript program management system with real-time Kanban board functionality.
 
+**🔄 Status**: Successfully integrated with PMliberary Supabase project (2025-08-03)
+**🎯 Architecture**: Optimistic updates + Real-time sync + Prefixed table schema
+
 ## Critical Issues Tracking
 
-### 🚨 Priority Issues
-- **Kanban Board Optimistic Updates**: Fixed 2025-08-02
-  - **Problem**: ドラッグ&ドロップの楽観的更新がうまく動作しない (optimistic updates broken)
-  - **Location**: https://delaxplatto.com/kanban
-  - **Root Cause**: 
-    - Premature reset of optimisticPrograms in useEffect (lines 159-168)
-    - Race condition between optimistic updates and real-time sync
-    - 100ms timing threshold too short and unreliable
-  - **Solution Applied**: 
-    - Implemented proper optimistic update pattern (update UI first, then API)
-    - Added complete original program state preservation for error recovery
-    - Improved real-time sync detection with actual state comparison
-    - Removed unreliable timing-based reset logic
-    - Added proper error handling with user feedback
-  - **Reference**: PMliberary drag-drop-optimistic-update-guide.md pattern
-  - **Status**: FIXED
+### ✅ Resolved Issues
+- **PMliberary Integration**: Completed 2025-08-03  
+  - **Challenge**: Database migration without service interruption
+  - **Solution**: Prefixed table clone strategy (`platto_*`)
+  - **Result**: Zero downtime migration, cost optimization achieved
+  - **Status**: PRODUCTION READY
+
+- **Optimistic Updates**: Implemented 2025-08-03
+  - **Challenge**: Sluggish UI response and poor drag & drop experience  
+  - **Solution**: PMliberary 3-stage optimistic update pattern
+  - **Features**: Instant UI feedback, automatic error rollback, conflict avoidance
+  - **Status**: FULLY FUNCTIONAL
 
 ## Workflow Documentation
 
