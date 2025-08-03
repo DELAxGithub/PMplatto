@@ -3,7 +3,7 @@ import type { DashboardWidget } from '../types/dashboard';
 
 export async function getDashboardWidgets(): Promise<DashboardWidget[]> {
   const { data, error } = await supabase
-    .from('team_dashboard')
+    .from('platto_team_dashboard')
     .select('*')
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
@@ -21,7 +21,7 @@ export async function updateDashboardWidget(
   updates: Partial<DashboardWidget>
 ): Promise<DashboardWidget> {
   const { data, error } = await supabase
-    .from('team_dashboard')
+    .from('platto_team_dashboard')
     .update(updates)
     .eq('id', id)
     .select()
@@ -39,7 +39,7 @@ export async function createDashboardWidget(
   widget: Omit<DashboardWidget, 'id' | 'created_at' | 'updated_at'>
 ): Promise<DashboardWidget> {
   const { data, error } = await supabase
-    .from('team_dashboard')
+    .from('platto_team_dashboard')
     .insert(widget)
     .select()
     .single();
@@ -54,7 +54,7 @@ export async function createDashboardWidget(
 
 export async function deleteDashboardWidget(id: string): Promise<void> {
   const { error } = await supabase
-    .from('team_dashboard')
+    .from('platto_team_dashboard')
     .delete()
     .eq('id', id);
 

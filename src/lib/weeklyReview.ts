@@ -15,17 +15,17 @@ export async function generateWeeklyReview(): Promise<WeeklyReviewData> {
 
   // 今週の放送・収録予定を取得
   const { data: programs } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .select('*')
     .or(`first_air_date.gte.${format(weekStart, 'yyyy-MM-dd')},filming_date.gte.${format(weekStart, 'yyyy-MM-dd')}`)
     .or(`first_air_date.lte.${format(weekEnd, 'yyyy-MM-dd')},filming_date.lte.${format(weekEnd, 'yyyy-MM-dd')}`);
 
   // 今週のタスクを取得
   const { data: tasks } = await supabase
-    .from('calendar_tasks')
+    .from('platto_calendar_tasks')
     .select(`
       *,
-      program:programs (
+      program:platto_programs (
         id,
         program_id,
         title
@@ -36,13 +36,13 @@ export async function generateWeeklyReview(): Promise<WeeklyReviewData> {
 
   // 先週の更新情報を取得
   const { data: recentPrograms } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .select('*')
     .gte('updated_at', format(lastWeekStart, 'yyyy-MM-dd'));
 
   // ステータス別の番組数を集計
   const { data: allPrograms } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .select('status');
 
   const statusSummary = (allPrograms || []).reduce((acc: Record<ProgramStatus, number>, program) => {

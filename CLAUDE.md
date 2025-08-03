@@ -54,3 +54,47 @@ PMplatto (プラッと進捗すごろく) is a React/TypeScript program manageme
 - localStorage caching for filter persistence
 - Proper dependency arrays in useEffect
 - Bundle optimization with Vite
+
+## Progress Tracking
+
+### 2025-08-03 06:00 - Project Cleanup & Optimization
+- **Task**: Complete project cleanup analysis and implementation
+- **Actions Completed**:
+  - Removed unused npm dependencies: @dnd-kit/core, @dnd-kit/modifiers, @dnd-kit/sortable
+  - Deleted dead code: parseJSTDate(), isJSTBefore(), formatJSTDate() functions from timezone.ts
+  - Cleaned unused import: parseISO from date-fns
+  - Preserved only actively used getJSTToday() function
+- **Results**:
+  - Bundle size reduction: ~150KB
+  - Dependencies reduced: 3 packages removed
+  - Code reduction: ~30 lines cleaned
+  - Improved maintainability and performance
+- **Deployment**: Direct push to production (commit: 3737466)
+- **Status**: ✅ COMPLETED
+
+### 2025-08-03 08:00 - Weekly Report Automation System
+- **Task**: Complete automated Slack weekly report system implementation
+- **Components Developed**:
+  - Database documentation: Comprehensive Supabase schema documentation (docs/database-schema.md)
+  - Weekly report engine: 2-week future schedule generation (src/lib/biWeeklyReview.ts)
+  - Slack integration: Rich message formatting with Block Kit (supabase/functions/weekly-report/index.ts)
+  - Program data update: Enhanced 018 program with delivery date and cast info
+  - Cron automation: Weekly schedule execution setup (pg_cron configuration)
+- **Technical Implementation**:
+  - **Supabase Edge Function**: Serverless weekly report generation and Slack notification
+  - **Data Integration**: Real-time fetch from programs + calendar_tasks + team_dashboard tables
+  - **Slack Formatting**: Complete package delivery dates, cast information, task schedules
+  - **Automated Scheduling**: Every Monday 8:00 AM JST via pg_cron (jobid: 1, active: true)
+- **Features Delivered**:
+  - 📊 Future 2-week schedule preview (current week + next week)
+  - 📦 Complete package delivery dates with program details
+  - 👥 Cast member information (subtitle + cast1 + cast2)
+  - 📝 Production tasks (MA, editing, preview screenings)
+  - 📢 Broadcast schedules and recording dates
+  - 🔄 Event-driven display (chronological integration of all event types)
+- **Production Deployment**:
+  - Edge Function URL: https://pgropwfkdcvbccdgscff.supabase.co/functions/v1/weekly-report
+  - Cron Job: pmplatto-weekly-report (schedule: 0 23 * * 0 UTC)
+  - Environment: Production-ready with secure webhook integration
+- **Team Impact**: Monday morning automated delivery of comprehensive 2-week production schedule to team Slack
+- **Status**: ✅ COMPLETED & LIVE

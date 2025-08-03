@@ -5,7 +5,7 @@ import type { CalendarTask, NewCalendarTask, UpdateCalendarTask } from '../types
 // 既存のプログラム関連の関数
 export async function getPrograms() {
   const { data, error } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -15,7 +15,7 @@ export async function getPrograms() {
 
 export async function createProgram(program: NewProgram) {
   const { data, error } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .insert([program])
     .select()
     .single();
@@ -29,7 +29,7 @@ export async function updateProgram(id: number, updates: UpdateProgram) {
   
   // First check if we can read the record
   const { data: currentData, error: readError } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .select('*')
     .eq('id', id)
     .single();
@@ -42,7 +42,7 @@ export async function updateProgram(id: number, updates: UpdateProgram) {
   console.log('📖 API: Current program data:', currentData);
   
   const { data, error } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .update(updates)
     .eq('id', id)
     .select()
@@ -67,7 +67,7 @@ export async function updateProgram(id: number, updates: UpdateProgram) {
 
 export async function deleteProgram(id: number) {
   const { error } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .delete()
     .eq('id', id);
 
@@ -77,10 +77,10 @@ export async function deleteProgram(id: number) {
 // カレンダータスク関連の関数
 export async function getCalendarTasks() {
   const { data, error } = await supabase
-    .from('calendar_tasks')
+    .from('platto_calendar_tasks')
     .select(`
       *,
-      program:programs (
+      program:platto_programs (
         id,
         program_id,
         title
@@ -94,11 +94,11 @@ export async function getCalendarTasks() {
 
 export async function createCalendarTask(task: NewCalendarTask) {
   const { data, error } = await supabase
-    .from('calendar_tasks')
+    .from('platto_calendar_tasks')
     .insert([task])
     .select(`
       *,
-      program:programs (
+      program:platto_programs (
         id,
         program_id,
         title
@@ -112,12 +112,12 @@ export async function createCalendarTask(task: NewCalendarTask) {
 
 export async function updateCalendarTask(id: string, updates: UpdateCalendarTask) {
   const { data, error } = await supabase
-    .from('calendar_tasks')
+    .from('platto_calendar_tasks')
     .update(updates)
     .eq('id', id)
     .select(`
       *,
-      program:programs (
+      program:platto_programs (
         id,
         program_id,
         title
@@ -131,7 +131,7 @@ export async function updateCalendarTask(id: string, updates: UpdateCalendarTask
 
 export async function deleteCalendarTask(id: string) {
   const { error } = await supabase
-    .from('calendar_tasks')
+    .from('platto_calendar_tasks')
     .delete()
     .eq('id', id);
 
@@ -141,7 +141,7 @@ export async function deleteCalendarTask(id: string) {
 // 日付に近い番組を取得する関数を改善
 export async function getNearbyPrograms(date: string) {
   const { data, error } = await supabase
-    .from('programs')
+    .from('platto_programs')
     .select('*')
     .order('first_air_date', { ascending: true });
 
