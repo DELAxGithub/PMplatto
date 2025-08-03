@@ -69,16 +69,32 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
               case 'UPDATE':
                 console.log('📝 Updating program via real-time:', payload.new.id, 'to status:', payload.new.status);
                 setPrograms(prev => {
-                  const updated = prev.map(p => (p.id === payload.new.id ? payload.new as Program : p));
-                  console.log('✅ Programs state updated via real-time');
-                  // リアルタイム更新のタイムスタンプをセット（ただし、これだけでは十分ではない）
-                  return updated;
+                  const currentProgram = prev.find(p => p.id === payload.new.id);
+                  if (currentProgram) {
+                    // 差分チェックで不要な更新を回避
+                    const hasChanges = Object.keys(payload.new).some(key =>
+                      key !== 'updated_at' && currentProgram[key as keyof Program] !== payload.new[key]
+                    );
+                    
+                    if (hasChanges) {
+                      console.log('✅ Programs state updated via real-time');
+                      return prev.map(p => (p.id === payload.new.id ? payload.new as Program : p));
+                    }
+                    console.log('🔄 No changes detected, skipping real-time update');
+                  }
+                  return prev; // 変更なしの場合は現在の状態維持
                 });
                 break;
               case 'DELETE':
-                setPrograms(prev =>
-                  prev.filter(p => p.id !== payload.old.id)
-                );
+                setPrograms(prev => {
+                  const exists = prev.find(p => p.id === payload.old.id);
+                  if (exists) {
+                    console.log('✅ Program deleted via real-time:', payload.old.id);
+                    return prev.filter(p => p.id !== payload.old.id);
+                  }
+                  console.log('🔄 Program already deleted, skipping real-time deletion');
+                  return prev; // 既に削除済みの場合は現在の状態維持
+                });
                 break;
               default:
                 // 不明なイベントタイプの場合は全データを再取得
@@ -109,23 +125,50 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateProgramData = async (id: number, updates: UpdateProgram) => {
+    // 1. 楽観的更新: API呼び出し前に即座にstateを更新
+    const originalProgram = programs.find(p => p.id === id);
+    if (originalProgram) {
+      setPrograms(prev =>
+        prev.map(p => (p.id === id ? { ...p, ...updates } : p))
+      );
+    }
+
     try {
       setError(null);
       const updatedProgram = await updateProgram(id, updates);
-      // リアルタイム更新で処理されるため、ここでのstate更新は不要
+      // 2. API成功時に正確なデータで上書き
+      setPrograms(prev =>
+        prev.map(p => (p.id === id ? updatedProgram : p))
+      );
       return updatedProgram;
     } catch (err) {
+      // 3. エラー時は元の状態に戻す (ロールバック)
+      if (originalProgram) {
+        setPrograms(prev =>
+          prev.map(p => (p.id === id ? originalProgram : p))
+        );
+      }
       setError(err instanceof Error ? err.message : '番組の更新に失敗しました');
       throw err;
     }
   };
 
   const deleteProgramData = async (id: number) => {
+    // 1. 楽観的更新: API呼び出し前に即座にstateを更新
+    const originalProgram = programs.find(p => p.id === id);
+    if (originalProgram) {
+      setPrograms(prev => prev.filter(p => p.id !== id));
+    }
+
     try {
       setError(null);
       await deleteProgram(id);
-      // リアルタイム更新で処理されるため、ここでのstate更新は不要
+      // 楽観的更新で既に削除済み
     } catch (err) {
+      // 2. エラー時は元の状態に戻す (ロールバック)
+      if (originalProgram) {
+        setPrograms(prev => [originalProgram, ...prev]);
+      }
       setError(err instanceof Error ? err.message : '番組の削除に失敗しました');
       throw err;
     }
