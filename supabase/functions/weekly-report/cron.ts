@@ -16,7 +16,7 @@ SELECT cron.schedule(
   $$
   SELECT
     net.http_post(
-      url := 'https://pgropwfkdcvbccdgscff.supabase.co/functions/v1/weekly-report',
+      url := 'https://pfrzcteapmwufnovmmfc.supabase.co/functions/v1/weekly-report',
       headers := '{"Authorization": "Bearer ' || current_setting('app.settings.service_role_key') || '", "Content-Type": "application/json"}'::jsonb
     ) as request_id;
   $$

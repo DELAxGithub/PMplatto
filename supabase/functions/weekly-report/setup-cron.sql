@@ -10,8 +10,8 @@ SELECT cron.schedule(
   '0 23 * * 0',
   $BODY$
     SELECT net.http_post(
-      'https://pgropwfkdcvbccdgscff.supabase.co/functions/v1/weekly-report',
-      '{"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncm9wd2ZrZGN2YmNjZGdzY2ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE2MjU0OTcsImV4cCI6MjA1NzIwMTQ5N30.Zbf0U4PH4m5_ieSmzhxX2isHdZCP7OB_FxUF2exW9rM", "Content-Type": "application/json"}'::jsonb
+      'https://pfrzcteapmwufnovmmfc.supabase.co/functions/v1/weekly-report',
+      '{"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmcnpjdGVhcG13dWZub3ZtbWZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMDAwNTAsImV4cCI6MjA2ODU3NjA1MH0.We0I0UDqKfS9jPSzDvWtQmB7na8YvCld6_Kko4uBCdU", "Content-Type": "application/json"}'::jsonb
     );
   $BODY$
 );
