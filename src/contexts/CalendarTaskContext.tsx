@@ -44,13 +44,13 @@ export function CalendarTaskProvider({ children }: { children: React.ReactNode }
 
       // リアルタイム更新のサブスクリプション設定
       const channel = supabase
-        .channel('calendar_tasks_changes')
+        .channel('platto_calendar_tasks_changes')
         .on(
           'postgres_changes',
           {
             event: '*',
             schema: 'public',
-            table: 'calendar_tasks'
+            table: 'platto_calendar_tasks'
           },
           async (payload) => {
             switch (payload.eventType) {

@@ -45,13 +45,13 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
       // リアルタイム更新のサブスクリプション設定
       console.log('🔗 Setting up real-time subscription for programs');
       const channel = supabase
-        .channel('programs_changes')
+        .channel('platto_programs_changes')
         .on(
           'postgres_changes',
           {
             event: '*',
             schema: 'public',
-            table: 'programs'
+            table: 'platto_programs'
           },
           async (payload) => {
             console.log('🔄 Real-time event:', payload.eventType, payload);
