@@ -19,7 +19,9 @@
       "Bash(mv:*)",
       "Bash(npm run lint)",
       "Bash(npx supabase:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(supabase secrets set:*)",
+      "Bash(supabase functions deploy:*)"
     ],
     "deny": []
   }

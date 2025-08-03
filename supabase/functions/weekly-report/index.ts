@@ -87,38 +87,42 @@ serve(async (req) => {
     // Format for Slack
     const slackMessage = formatSlackMessage(reviewData)
     
-    // Send to Slack (comment out for testing)
+    // Send to Slack (optional)
     const webhookUrl = Deno.env.get('SLACK_WEBHOOK_URL')
     
-    // For testing - skip actual Slack sending
     console.log('📝 Slack message prepared:', JSON.stringify(slackMessage, null, 2))
-    console.log('✅ Would send to Slack webhook:', webhookUrl)
     
-    /* Uncomment when Slack webhook is ready:
-    if (!webhookUrl) {
-      throw new Error('SLACK_WEBHOOK_URL environment variable is not set')
+    let slackStatus = 'スキップ済み（Webhook URL未設定）'
+    
+    if (webhookUrl) {
+      try {
+        const slackResponse = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(slackMessage),
+        })
+
+        if (slackResponse.ok) {
+          console.log('✅ Slack notification sent successfully')
+          slackStatus = '送信成功'
+        } else {
+          console.warn(`⚠️ Slack notification failed: ${slackResponse.statusText}`)
+          slackStatus = `送信失敗: ${slackResponse.statusText}`
+        }
+      } catch (error) {
+        console.warn('⚠️ Slack notification error:', error)
+        slackStatus = `送信エラー: ${error.message}`
+      }
     }
-
-    const slackResponse = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(slackMessage),
-    })
-
-    if (!slackResponse.ok) {
-      throw new Error(`Failed to send Slack message: ${slackResponse.statusText}`)
-    }
-
-    console.log('✅ Slack notification sent successfully')
-    */
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Weekly report sent to Slack successfully',
-        data: reviewData 
+        message: `Weekly report generated successfully (Slack: ${slackStatus})`,
+        data: reviewData,
+        slack_status: slackStatus
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
