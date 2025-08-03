@@ -16,7 +16,10 @@
       "Bash(npx supabase db remote:*)",
       "Bash(node:*)",
       "Bash(npm install:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(npm run lint)",
+      "Bash(npx supabase:*)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }

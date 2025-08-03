@@ -11,9 +11,6 @@
     "weekly-review": "tsx src/scripts/weeklyReview.ts"
   },
   "dependencies": {
-    "@dnd-kit/core": "^6.1.0",
-    "@dnd-kit/modifiers": "^7.0.0",
-    "@dnd-kit/sortable": "^8.0.0",
     "@hello-pangea/dnd": "^16.5.0",
     "@supabase/supabase-js": "^2.39.7",
     "@vitejs/plugin-react": "^4.3.1",
